@@ -1,21 +1,19 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { Suspense, lazy } from 'react';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+
+const Intro = lazy(() => import('./routes/intro'));
+const FormPage = lazy(() => import('./routes/formPage'));
 
 function App() {
   return (
-    <div className="App">      
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Frontend challange by Ram Mukmel
-        </p>
-        <a
-          className="btn"
-          href="#"          
-          rel="noopener noreferrer"
-        >
-          Start
-        </a>      
-    </div>
+    <Router>
+      <Suspense fallback={<div>Loading...</div>}>
+        <Switch>
+          <Route exact path="/" component={Intro} />
+          <Route path="/formPage" component={FormPage} />
+        </Switch>
+      </Suspense>
+    </Router>
   );
 }
 
