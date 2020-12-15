@@ -4,7 +4,7 @@ import { Context } from '../Store'
 
 
 import { makeStyles } from '@material-ui/core/styles';
-import { TextField, Button } from '@material-ui/core';
+import { Box, Typography, TextField, Button } from '@material-ui/core';
 
 import { useForm } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -12,9 +12,13 @@ import * as yup from "yup";
 
 const useStyles = makeStyles((theme) => ({
     root: {
+        display:'flex',
+        flexWrap:'wrap',
+        justifyContent: 'space-even',
         '& .MuiTextField-root': {
-            margin: theme.spacing(1),
-            width: 200,
+            margin: theme.spacing(2),
+            minWidth: '250px',   
+            width: '30%',
         },
     },
 }));
@@ -37,35 +41,37 @@ export default function PersonalDetails(props) {
     
     return (
         <>        
-            <TextField     
-                inputRef={register({ required: true })}
-                error={ (errors.fullName)?true:false }                  
-                name="fullName"                                 
-                helperText={errors.fullName?.message}                
-                variant="outlined"                
-                placeholder="Full name*"
-                defaultValue={state.personalDetails.fullName}                
-            />
-            
-            <TextField
-                inputRef={register({ required: true })}
-                error={(errors.email)?true:false}                
-                name="email"                                                                
-                helperText={errors.email?.message }
-                variant="outlined"
-                type="email"
-                placeholder="Email*"
-                defaultValue={state.personalDetails.email} 
-                
-            />            
-            <TextField
-                inputRef={register}
-                name="phone"                
-                helperText=""
-                variant="outlined"
-                placeholder="Phone number"                
-                defaultValue={state.personalDetails.phone} 
-            />
+            <Typography align="left" component="h2" variant="h4">Personal details</Typography>
+            <Box className={classes.root}>
+                <TextField                  
+                    inputRef={register({ required: true })}
+                    error={ (errors.fullName)?true:false }                  
+                    name="fullName"                                 
+                    helperText={errors.fullName?.message}                
+                    variant="outlined"                
+                    placeholder="Full name*"
+                    defaultValue={state.personalDetails.fullName}                
+                />
+                <TextField
+                    inputRef={register({ required: true })}
+                    error={(errors.email)?true:false}                
+                    name="email"                                                                
+                    helperText={errors.email?.message }
+                    variant="outlined"
+                    type="email"
+                    placeholder="Email*"
+                    defaultValue={state.personalDetails.email} 
+                    
+                />            
+                <TextField
+                    inputRef={register}
+                    name="phone"                
+                    helperText=""
+                    variant="outlined"
+                    placeholder="Phone number"                
+                    defaultValue={state.personalDetails.phone} 
+                />
+            </Box>
             <div>
                 <Button
                     variant="contained"
