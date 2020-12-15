@@ -1,29 +1,69 @@
-import React from 'react';
-import Radio from '@material-ui/core/Radio';
-import RadioGroup from '@material-ui/core/RadioGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormControl from '@material-ui/core/FormControl';
-import Button from '@material-ui/core/Button';
+import React, { useContext } from 'react';
+import { Context } from '../Store'
 
-import IconButton from '@material-ui/core/IconButton';
+import { Radio, RadioGroup, FormControlLabel, FormControl, Button, IconButton }  from '@material-ui/core';
 import BackIcon from '@material-ui/icons/ChevronLeft';
 
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from "yup";
+
+import { useForm, Controller } from "react-hook-form";
+
+const schema = yup.object().shape({
+    salary: yup.string().required("Required field"),   
+});
+
+const salaries = [
+    { id: "0", label: '0 - 1.000' },
+    { id: "1", label: '1.000 - 2.000' },
+    { id: "2", label: '2.000 - 3.000' },
+    { id: "3", label: '3.000 - 4.000' },
+    { id: "4", label: 'Mehr als 4.000' },
+]
+
 export default function Salary(props) {
+    const [state, dispatch] = useContext(Context); 
+
+    const { control, getValues } = useForm({
+        mode: "onChange",
+        resolver: yupResolver(schema)
+    });
+
     return (
         <FormControl component="fieldset">
-            <RadioGroup aria-label="salary" name="salary" value={props.values.salary} onChange={props.handleChange('salary')}>
-                {props.salaries.map((salary, index) => (
-                    <FormControlLabel key={index} value={salary.id} control={<Radio />} label={salary.label} />
-                ))}
-            </RadioGroup>
+            <Controller
+                render={(
+                    { onChange ,name}                    
+                ) => (
+                    <RadioGroup aria-label="salary"
+                            defaultValue={state.salary.value}
+                                name={name}
+                                onChange={ e=>{onChange(e.target.value)} }
+                    >
+                        {salaries.map((salary, index) => (
+                            <FormControlLabel key={index} value={salary.id} control={<Radio />} label={salary.label} />
+                        ))}                    
+                    </RadioGroup>
+                )}                
+                defaultValue={state.salary.value}                
+                name="salary"
+                control={control}
+            />
             <div>
-                <IconButton aria-label="back" onClick={props.handleBack}>
+                <IconButton aria-label="back" onClick={ ()=>{dispatch({ type:'PREV_STEP'})} }>
                     <BackIcon />
                 </IconButton>
                 <Button
                     variant="contained"
                     color="primary"
-                    onClick={props.handleNext}>
+                    onClick={() => {                              
+                            let value = getValues().salary      
+                            dispatch({ type: 'SET_SALARY', payload: { value,
+                                                                      description: salaries[value].label } 
+                                     })
+                            dispatch({ type: 'NEXT_STEP' })                          
+                    }}                
+                >
                     Next
                 </Button>
             </div>

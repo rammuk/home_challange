@@ -1,23 +1,29 @@
+import React, { useContext } from 'react';
+import { Context } from '../Store'
+
+
 import IconButton from '@material-ui/core/IconButton';
 import BackIcon from '@material-ui/icons/ChevronLeft';
 
-export default function Summary(props) {
+export default function Summary() {
+    const [state, dispatch] = useContext(Context); 
+
     return (
         <div>
             <div>
-                Full name: {props.values.fullName}
+                Full name: {state.personalDetails.fullName}
             </div>
             <div>
-                Email: {props.values.email}
+                Email: {state.personalDetails.email}
             </div>
             <div>
-                Phone number: {props.values.phoneNumber}
+                Phone number: {state.personalDetails.phone}
             </div>
             <div>
-                Salary: {props.salaries[props.values.salary].label}
+                Salary: {state.salary.description}
             </div>
             <div>
-                <IconButton aria-label="back" onClick={props.handleBack}>
+                <IconButton aria-label="back" onClick={() => { dispatch({ type: 'PREV_STEP' }) } }>
                     <BackIcon />
                 </IconButton>
             </div>

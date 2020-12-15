@@ -1,8 +1,14 @@
 
-import React from 'react';
+import React, { useContext } from 'react';
+import { Context } from '../Store'
+
+
 import { makeStyles } from '@material-ui/core/styles';
-import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
+import { TextField, Button } from '@material-ui/core';
+
+import { useForm } from "react-hook-form";
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from "yup";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -13,45 +19,68 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
+const schema = yup.object().shape({
+    fullName: yup.string().required("Required field"),
+    email: yup.string().required("Required field").email("Please enter valid email address"),
+});
+
 
 export default function PersonalDetails(props) {
     const classes = useStyles();
+    const [state, dispatch] = useContext(Context); 
+
+    const { register, errors, trigger , getValues } = useForm({
+        mode: "onChange",
+        resolver: yupResolver(schema)
+    });
+
     
     return (
-        <form className={classes.root} autoComplete="off">
-            <TextField
-                id="fullName"
-                helperText=""
-                variant="outlined"
-                placeholder="Full name"
-                value={props.values.fullName}
-                onChange={props.handleChange('fullName')}
+        <>        
+            <TextField     
+                inputRef={register({ required: true })}
+                error={ (errors.fullName)?true:false }                  
+                name="fullName"                                 
+                helperText={errors.fullName?.message}                
+                variant="outlined"                
+                placeholder="Full name*"
+                defaultValue={state.personalDetails.fullName}                
             />
+            
             <TextField
-                id="email"
+                inputRef={register({ required: true })}
+                error={(errors.email)?true:false}                
+                name="email"                                                                
+                helperText={errors.email?.message }
+                variant="outlined"
+                type="email"
+                placeholder="Email*"
+                defaultValue={state.personalDetails.email} 
+                
+            />            
+            <TextField
+                inputRef={register}
+                name="phone"                
                 helperText=""
                 variant="outlined"
-                placeholder="Email"
-                value={props.values.email}
-                onChange={props.handleChange('email')}
-            />
-            <TextField
-                id="phoneNumber"
-                helperText=""
-                variant="outlined"
-                placeholder="Phone number"
-                value={props.values.phoneNumber}
-                onChange={props.handleChange('phoneNumber')}
+                placeholder="Phone number"                
+                defaultValue={state.personalDetails.phone} 
             />
             <div>
                 <Button
                     variant="contained"
                     color="primary"
-                    onClick={props.handleNext}>
+                    onClick={async () => {
+                        let result = await trigger(['fullName', 'email']);                        
+                        if (result) { 
+                            dispatch({ type: 'SET_PERSONAL_DETAIL', payload: getValues() }) 
+                            dispatch({ type: 'NEXT_STEP' }) 
+                        }
+                    }}
+                >
                     Next
                 </Button>
             </div>
-        </form>
-        
+        </>
     );
 }
