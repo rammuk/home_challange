@@ -33,12 +33,12 @@ export default function Salary(props) {
         <FormControl component="fieldset">
             <Controller
                 render={(
-                    { onChange ,name}                    
+                    { onChange, value ,name}                    
                 ) => (
                     <RadioGroup aria-label="salary"
-                            defaultValue={state.salary.value}
+                                value={value}
                                 name={name}
-                                onChange={ e=>{onChange(e.target.value)} }
+                                onChange={onChange}
                     >
                         {salaries.map((salary, index) => (
                             <FormControlLabel key={index} value={salary.id} control={<Radio />} label={salary.label} />
